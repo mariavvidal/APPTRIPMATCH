@@ -1,0 +1,872 @@
+
+<!DOCTYPE html>
+<!--
+  Este es el "esqueleto obligatorio" que vimos en la Clase 2.
+  El DOCTYPE le avisa al navegador que el archivo está escrito en HTML5.
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- charset UTF-8: sin esto, las tildes y la ñ se ven raras (Clase 2) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- viewport: hace que la página se adapte al ancho real del celular (Clase 2) -->
+  <title>TripMatch — Tu próximo viaje grupal ya existe</title>
+
+  <!-- Fuentes de Google Fonts: Plus Jakarta Sans para títulos, Inter para textos -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome: librería externa de íconos, así no dibujo cada ícono a mano en SVG -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Acá conecto mi hoja de estilos externa. Esta es la forma profesional de usar CSS (Clase 4) -->
+  <!-- ?v=3 al final: fuerza al navegador a traer la versión nueva y no la de caché.
+       Si alguna vez vuelvo a ver estilos rotos, subo este número. -->
+  <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+
+  <!-- ============================================
+       HEADER / NAV — Clase 6 (Flexbox) + Clase 7 (position: fixed)
+       El <header> agrupa el logo y el menú, como vimos en la Clase 2
+       (analogía del diario: header = cabecera de la página).
+       Lo dejo "fixed" para que acompañe al usuario mientras hace scroll,
+       tal cual el ejemplo de navbar fija que vimos en la Clase 7.
+  ============================================ -->
+  <header class="navbar">
+    <div class="navbar__contenedor">
+
+      <!-- Logo armado con un ícono + texto, alineados con Flexbox -->
+      <a href="#hero" class="navbar__logo">
+        <svg class="navbar__logo-icono" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.2"/>
+          <g stroke="currentColor" stroke-width="1" stroke-linecap="round">
+            <line x1="12" y1="2" x2="12" y2="3.3"/>
+            <line x1="17" y1="3.34" x2="16.35" y2="4.47"/>
+            <line x1="20.66" y1="7" x2="19.53" y2="7.65"/>
+            <line x1="22" y1="12" x2="20.7" y2="12"/>
+            <line x1="20.66" y1="17" x2="19.53" y2="16.35"/>
+            <line x1="17" y1="20.66" x2="16.35" y2="19.53"/>
+            <line x1="12" y1="22" x2="12" y2="20.7"/>
+            <line x1="7" y1="20.66" x2="7.65" y2="19.53"/>
+            <line x1="3.34" y1="17" x2="4.47" y2="16.35"/>
+            <line x1="2" y1="12" x2="3.3" y2="12"/>
+            <line x1="3.34" y1="7" x2="4.47" y2="7.65"/>
+            <line x1="7" y1="3.34" x2="7.65" y2="4.47"/>
+          </g>
+          <text x="12" y="7.6" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">N</text>
+          <text x="17.3" y="13.1" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">E</text>
+          <text x="12" y="18.7" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">S</text>
+          <text x="6.7" y="13.1" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">W</text>
+          <path d="M12,7 L13.4,10.6 L17,12 L13.4,13.4 L12,17 L10.6,13.4 L7,12 L10.6,10.6 Z" fill="var(--naranja)"/>
+        </svg>
+        <span class="navbar__logo-texto">TRIP<span class="navbar__logo-acento">MATCH</span></span>
+      </a>
+
+      <!-- Nav: etiqueta exclusiva para los links de navegación (Clase 3) -->
+      <nav class="navbar__links" id="menu-principal">
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#comparar">Comparar viajes</a>
+        <a href="#features">Por qué nosotros</a>
+        <a href="buscar.html">Probar la app</a>
+      </nav>
+
+      <!--
+        CLASE 2 — Multi-página: estos botones ahora son <a href="...">
+        comunes que llevan a páginas HTML reales (login.html,
+        perfil.html), no botones de JS que abren un modal.
+        main.js sigue decidiendo, con JS, si se muestra este bloque
+        o el de "sesión activa" de acá abajo, leyendo el login
+        guardado (Clase 18: style.display).
+      -->
+      <!--
+        CLASE 2 — Un solo CTA en vez de dos botones separados
+        ("Iniciar sesión" / "Crear perfil"): login.html ya resuelve
+        las dos cosas en la misma pantalla (login manual, Google, o
+        el link a registrarse), así que tener dos botones para el
+        mismo destino era redundante.
+      -->
+      <div class="navbar__acciones" id="navbar-sesion-inactiva">
+        <a href="login.html" id="btn-abrir-login" class="btn-primario">Iniciar sesión / Crear perfil</a>
+      </div>
+
+      <!-- Se muestra recién cuando hay sesión guardada (Clase 12) -->
+      <div class="navbar__acciones" id="navbar-sesion-activa" style="display:none;">
+        <span class="btn-texto" id="navbar-saludo">Hola</span>
+        <a href="inicio.html" id="btn-ir-inicio" class="btn-texto">Inicio</a>
+        <a href="guardados.html" id="btn-ir-guardados" class="btn-texto">Guardados</a>
+        <button id="btn-cerrar-sesion" class="btn-primario btn-primario--chico">Cerrar sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ============================================
+         HERO SECTION — Clase 5 (Box Model) + Clase 6 (Flexbox) + Clase 7 (position)
+         Sección de bienvenida en dos columnas: texto a la izquierda, imagen/mockup a la derecha.
+         Uso position: relative en la sección para poder anclar la imagen de fondo con absolute.
+    ============================================ -->
+    <section class="hero" id="hero">
+      <!-- Imagen de fondo posicionada absolute dentro de un padre relative (Regla de Oro Clase 7) -->
+      <img
+        class="hero__imagen-fondo"
+        src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=1400&h=900&fit=crop&auto=format"
+        alt="Grupo de amigos viajando juntos">
+      <div class="hero__overlay"></div>
+
+      <div class="hero__contenido">
+        <div class="hero__columna-texto">
+          <span class="hero__badge">
+            <i class="fa-solid fa-circle hero__badge-punto"></i>
+            +2.400 viajes grupales disponibles
+          </span>
+
+          <h1 class="hero__titulo">
+            Tu próximo viaje grupal
+            <span class="hero__titulo-acento">ya existe. Solo falta encontrarlo.</span>
+          </h1>
+
+          <p class="hero__parrafo">
+            Contanos quién sos, qué te gusta y cómo viajás.
+            Nosotros encontramos los viajes grupales perfectos para vos.
+          </p>
+
+          <div class="hero__botones">
+            <a href="login.html" id="btn-hero-crear-perfil" class="btn-cta">
+              Crear mi perfil de viajero
+              <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="buscar.html" id="btn-hero-explorar" class="btn-secundario">
+              <i class="fa-solid fa-compass"></i>
+              Explorar viajes
+            </a>
+          </div>
+
+          <div class="hero__social-proof">
+            <div class="hero__avatares">
+              <span class="avatar avatar--verde">SM</span>
+              <span class="avatar avatar--verde-oscuro">DR</span>
+              <span class="avatar avatar--naranja">VC</span>
+              <span class="avatar avatar--naranja-oscuro">AR</span>
+            </div>
+            <div>
+              <div class="hero__estrellas">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <span class="hero__nota">4.9</span>
+              </div>
+              <p class="hero__sub">+12.000 viajeros satisfechos</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna del "celular" con la tarjeta de viaje adentro -->
+        <div class="hero__columna-mockup">
+          <div class="celular-mockup">
+            <div class="celular-mockup__notch"></div>
+
+            <div class="celular-mockup__pantalla">
+              <p class="celular-mockup__eyebrow">Comparar viajes</p>
+              <p class="celular-mockup__titulo">Mismo formato</p>
+
+              <div class="tarjeta-viaje-mini">
+                <div class="tarjeta-viaje-mini__imagen-wrap">
+                  <img src="https://images.unsplash.com/photo-1672841828459-bc913fdcd995?w=600&h=400&fit=crop&auto=format" alt="Croacia, costa dálmata">
+                  <span class="tarjeta-viaje-mini__badge">Mejor precio</span>
+                  <div class="tarjeta-viaje-mini__pie-imagen">
+                    <p>Croacia</p>
+                    <span>Costa Dálmata · Adriatic Travel Co.</span>
+                  </div>
+                </div>
+                <div class="tarjeta-viaje-mini__datos">
+                  <div class="dato-chip">
+                    <p class="dato-chip__label">Precio</p>
+                    <p class="dato-chip__valor dato-chip__valor--verde">USD 1.690</p>
+                  </div>
+                  <div class="dato-chip">
+                    <p class="dato-chip__label">Fechas</p>
+                    <p class="dato-chip__valor">1–12 Mar</p>
+                  </div>
+                  <div class="dato-chip">
+                    <p class="dato-chip__label">Grupo</p>
+                    <p class="dato-chip__valor">10–14 pers.</p>
+                  </div>
+                  <div class="dato-chip">
+                    <p class="dato-chip__label">Estilo de viaje</p>
+                    <p class="dato-chip__valor">Relax total</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tarjetas flotantes: hijas absolute de un padre relative (celular-mockup wrapper) -->
+          <div class="hero__flotante hero__flotante--arriba">
+            <i class="fa-solid fa-arrow-trend-up"></i>
+            <div>
+              <p class="hero__flotante-titulo">98% match</p>
+              <p class="hero__flotante-sub">Patagonia trip</p>
+            </div>
+          </div>
+          <div class="hero__flotante hero__flotante--abajo">
+            <i class="fa-solid fa-heart" style="color:#FF6B35"></i>
+            <div>
+              <p class="hero__flotante-titulo">¡Guardado!</p>
+              <p class="hero__flotante-sub">Islas Griegas</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         SECCIÓN PROBLEMA — Clase 5 (selectores, box model) + Clase 6 (flexbox wrap)
+    ============================================ -->
+    <section class="problema">
+      <div class="contenedor-ancho">
+        <div class="titulo-seccion titulo-seccion--oscuro">
+          <span class="eyebrow eyebrow--naranja">El problema actual</span>
+          <h2>¿Por qué buscar viajes grupales es tan frustrante?</h2>
+          <p>La información está fragmentada en decenas de sitios, con formatos distintos y sin forma de comparar.</p>
+        </div>
+
+        <!-- Grilla de "dolores" del usuario: tarjetas iguales, con Flexbox + flex-wrap alcanza (Clase 6) -->
+        <div class="fila-flex fila-flex--wrap fila-flex--centrado">
+          <div class="tarjeta-dolor">
+            <span class="tarjeta-dolor__emoji">😩</span>
+            <p>Sobrecarga de información</p>
+          </div>
+          <div class="tarjeta-dolor">
+            <span class="tarjeta-dolor__emoji">😕</span>
+            <p>Incertidumbre</p>
+          </div>
+          <div class="tarjeta-dolor">
+            <span class="tarjeta-dolor__emoji">🔄</span>
+            <p>Carga cognitiva</p>
+          </div>
+          <div class="tarjeta-dolor">
+            <span class="tarjeta-dolor__emoji">😤</span>
+            <p>Frustración</p>
+          </div>
+          <div class="tarjeta-dolor">
+            <span class="tarjeta-dolor__emoji">😰</span>
+            <p>Miedo a equivocarse</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         SECCIÓN PERFIL / INTERESES — Clase 6 (Flexbox, dos columnas)
+    ============================================ -->
+    <section class="perfil" id="perfil">
+      <div class="contenedor-ancho fila-flex fila-flex--dos-columnas">
+
+        <div class="perfil__columna-texto">
+          <span class="eyebrow eyebrow--verde">Cómo funciona la magia</span>
+          <h2 class="titulo-mediano">
+            Un perfil.<br>
+            <span class="texto-verde">Recomendaciones personalizadas.</span>
+          </h2>
+          <p class="parrafo-gris">
+            Así como <strong>Spotify</strong> descubre tu próxima canción favorita o
+            <strong>Netflix</strong> te sugiere tu próxima serie — TripMatch aprende tus
+            intereses, tu estilo y cómo viajás para recomendarte
+            <strong class="texto-verde">exactamente el viaje grupal que estabas buscando.</strong>
+          </p>
+
+          <ul class="lista-pasos">
+            <li>
+              <span class="icono-circulo"><i class="fa-solid fa-users"></i></span>
+              Contanos tu estilo de viaje y tus intereses
+            </li>
+            <li>
+              <span class="icono-circulo"><i class="fa-solid fa-bolt"></i></span>
+              El algoritmo analiza miles de viajes grupales
+            </li>
+            <li>
+              <span class="icono-circulo"><i class="fa-solid fa-arrow-trend-up"></i></span>
+              Recibís solo los viajes que encajan con vos
+            </li>
+          </ul>
+        </div>
+
+        <div class="perfil__columna-tarjeta">
+          <div class="tarjeta-intereses">
+            <h3>¿Qué te interesa?</h3>
+            <p class="tarjeta-intereses__sub">Seleccioná todo lo que aplica.</p>
+
+            <!-- Etiquetas de interés: Flexbox con wrap, así se acomodan solas (Clase 6) -->
+            <div class="fila-flex fila-flex--wrap tarjeta-intereses__tags">
+              <span class="tag tag--activo">Aventura</span>
+              <span class="tag tag--activo">Naturaleza</span>
+              <span class="tag">Cultura</span>
+              <span class="tag">Playa</span>
+              <span class="tag">Fotografía</span>
+              <span class="tag">Gastronomía</span>
+              <span class="tag tag--activo">Senderismo</span>
+              <span class="tag">Lujo</span>
+              <span class="tag">Económico</span>
+              <span class="tag">Viaje Lento</span>
+              <span class="tag">Bienestar</span>
+              <span class="tag">Parejas</span>
+              <span class="tag">Solo</span>
+              <span class="tag">Amigos</span>
+              <span class="tag">Idiomas</span>
+            </div>
+
+            <div class="resultado-match">
+              <p class="resultado-match__titulo">
+                <span class="icono-circulo icono-circulo--chico"><i class="fa-solid fa-bolt"></i></span>
+                TripMatch encontró viajes para vos
+              </p>
+              <div class="resultado-match__item">
+                <span>Patagonia Trek</span>
+                <span><b class="chip-match">98%</b> USD 1.850</span>
+              </div>
+              <div class="resultado-match__item">
+                <span>Volcanes de Guatemala</span>
+                <span><b class="chip-match">94%</b> USD 1.200</span>
+              </div>
+              <div class="resultado-match__item">
+                <span>Nepal Base Camp</span>
+                <span><b class="chip-match">91%</b> USD 2.400</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         SECCIÓN COMPARAR VIAJES — Clase 6 (Flexbox wrap para tarjetas iguales)
+    ============================================ -->
+    <section class="comparar" id="comparar">
+      <div class="contenedor-ancho">
+        <div class="titulo-seccion">
+          <span class="eyebrow eyebrow--naranja">La funcionalidad clave</span>
+          <h2>
+            Mismo destino. Mismas fechas.<br>
+            <span class="texto-verde">Dos proveedores. Vos elegís.</span>
+          </h2>
+          <p>TripMatch agrupa todos los viajes al mismo destino y fechas de distintas
+             agencias, y los presenta en el mismo formato para comparar en segundos.</p>
+        </div>
+
+        <!-- Dos tarjetas de comparación, mismo tamaño → Flexbox alcanza perfecto (Clase 6) -->
+        <div class="fila-flex fila-flex--wrap fila-flex--centrado tarjetas-comparar">
+
+          <article class="tarjeta-viaje">
+            <div class="tarjeta-viaje__imagen-wrap">
+              <img src="https://images.unsplash.com/photo-1672841828459-bc913fdcd995?w=600&h=400&fit=crop&auto=format" alt="Croacia costa dálmata">
+              <span class="tarjeta-viaje__badge">Mejor precio</span>
+              <div class="tarjeta-viaje__pie-imagen">
+                <p>Croacia — Costa Dálmata</p>
+                <span>Adriatic Travel Co.</span>
+              </div>
+            </div>
+            <div class="tarjeta-viaje__cuerpo">
+              <div class="tarjeta-viaje__grilla-datos">
+                <div class="dato-chip dato-chip--grande"><p class="dato-chip__label">Precio</p><p class="dato-chip__valor dato-chip__valor--verde">USD 1.690</p></div>
+                <div class="dato-chip dato-chip--grande"><p class="dato-chip__label">Fechas</p><p class="dato-chip__valor">1–12 Mar 2025</p></div>
+                <div class="dato-chip dato-chip--grande"><p class="dato-chip__label">Estilo de viaje</p><p class="dato-chip__valor">Relax total</p></div>
+                <div class="dato-chip dato-chip--grande"><p class="dato-chip__label">Rango de edad</p><p class="dato-chip__valor">25–40</p></div>
+                <div class="dato-chip dato-chip--grande"><p class="dato-chip__label">Tamaño grupo</p><p class="dato-chip__valor">10–14 personas</p></div>
+                <div class="dato-chip dato-chip--grande"><p class="dato-chip__label">Alojamiento</p><p class="dato-chip__valor">Hotel 4★ Dubrovnik</p></div>
+              </div>
+              <div class="dato-chip dato-chip--ancho">
+                <p class="dato-chip__label">Actividades</p>
+                <div class="fila-flex fila-flex--wrap" style="margin-top:6px;">
+                  <span class="tag-actividad">Cultura</span>
+                  <span class="tag-actividad">Playa</span>
+                  <span class="tag-actividad">Gastronomía</span>
+                </div>
+              </div>
+              <div class="dato-chip dato-chip--ancho">
+                <p class="dato-chip__label">Incluye</p>
+                <p class="dato-chip__valor">Vuelos, desayunos, ferry, guía local</p>
+              </div>
+              <div class="tarjeta-viaje__pie">
+                <div class="tarjeta-viaje__rating">
+                  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                  <b>4.8</b> <span>(47 reseñas)</span>
+                </div>
+                <a href="#" class="btn-primario btn-primario--chico">Ver viaje</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="tarjeta-viaje">
+            <div class="tarjeta-viaje__imagen-wrap">
+              <img src="https://images.unsplash.com/photo-1533240332313-0db49b459ad6?w=600&h=400&fit=crop&auto=format" alt="Croacia villa boutique">
+              <span class="tarjeta-viaje__badge tarjeta-viaje__badge--verde">Todo incluido</span>
+              <div class="tarjeta-viaje__pie-imagen">
+                <p>Croacia — Costa Dálmata</p>
+                <span>Euro Group Tours</span>
+              </div>
+            </div>
+            <div class="tarjeta-viaje__cuerpo">
+              <div class="tarjeta-viaje__grilla-datos">
+                <div class="dato-chip dato-chip--grande"><p class="dato-chip__label">Precio</p><p class="dato-chip__valor dato-chip__valor--verde">USD 1.950</p></div>
+                <div class="dato-chip dato-chip--grande"><p class="dato-chip__label">Fechas</p><p class="dato-chip__valor">1–12 Mar 2025</p></div>
+                <div class="dato-chip dato-chip--grande"><p class="dato-chip__label">Estilo de viaje</p><p class="dato-chip__valor">Relax total</p></div>
+                <div class="dato-chip dato-chip--grande"><p class="dato-chip__label">Rango de edad</p><p class="dato-chip__valor">28–45</p></div>
+                <div class="dato-chip dato-chip--grande"><p class="dato-chip__label">Tamaño grupo</p><p class="dato-chip__valor">8–10 personas</p></div>
+                <div class="dato-chip dato-chip--grande"><p class="dato-chip__label">Alojamiento</p><p class="dato-chip__valor">Villa boutique frente al mar</p></div>
+              </div>
+              <div class="dato-chip dato-chip--ancho">
+                <p class="dato-chip__label">Actividades</p>
+                <div class="fila-flex fila-flex--wrap" style="margin-top:6px;">
+                  <span class="tag-actividad">Cultura</span>
+                  <span class="tag-actividad">Senderismo</span>
+                  <span class="tag-actividad">Playa</span>
+                </div>
+              </div>
+              <div class="dato-chip dato-chip--ancho">
+                <p class="dato-chip__label">Incluye</p>
+                <p class="dato-chip__valor">Vuelos, todas las comidas, ferry, guía, seguro</p>
+              </div>
+              <div class="tarjeta-viaje__pie">
+                <div class="tarjeta-viaje__rating">
+                  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                  <b>4.9</b> <span>(61 reseñas)</span>
+                </div>
+                <a href="#" class="btn-primario btn-primario--chico">Ver viaje</a>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="alinear-centro" style="margin-top:48px;">
+          <a href="#" class="btn-primario">
+            Ver todos los viajes
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         SECCIÓN VALOR EXTRA — notificaciones, comunidad y nube de fotos.
+         Acá está la grilla estilo Pinterest resuelta con CSS Grid (ver nota abajo).
+    ============================================ -->
+    <section class="valor-extra">
+      <div class="contenedor-ancho">
+        <div class="titulo-seccion">
+          <span class="eyebrow eyebrow--naranja">Más que búsqueda</span>
+          <h2>
+            La experiencia empieza antes del viaje<br>
+            <span class="texto-verde">y continúa mucho después.</span>
+          </h2>
+        </div>
+
+        <!-- Dos tarjetas grandes, mismo alto, una al lado de la otra → Flexbox (Clase 6) -->
+        <div class="fila-flex fila-flex--wrap fila-flex--dos-columnas" style="margin-bottom:32px;">
+
+          <div class="tarjeta-oscura">
+            <div>
+              <span class="icono-circulo icono-circulo--grande icono-circulo--naranja"><i class="fa-solid fa-bell"></i></span>
+              <h3>Alertas que trabajan por vos</h3>
+              <p>TripMatch te avisa cuando aparece un nuevo viaje que encaja con tu
+                 perfil, o cuando hay novedades sobre destinos que guardaste.</p>
+            </div>
+            <div class="lista-notificaciones">
+              <div class="notificacion">
+                <span>🏔️</span>
+                <div><p>Nuevo viaje a Patagonia</p><span>Coincide 97% · Quedan 3 lugares</span></div>
+              </div>
+              <div class="notificacion">
+                <span>🇯🇵</span>
+                <div><p>Japón en flor de cerezo</p><span>Nuevo viaje de tu operadora favorita</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tarjeta-verde">
+            <div>
+              <span class="icono-circulo icono-circulo--grande icono-circulo--blanco"><i class="fa-solid fa-message"></i></span>
+              <h3>Comunidad del grupo</h3>
+              <p>Una vez que confirmás tu lugar, se habilita un espacio exclusivo
+                 para todos los participantes. Conocé a tus compañeros antes de viajar.</p>
+            </div>
+            <div class="lista-chat">
+              <p class="lista-chat__titulo">Patagonia Trek · 8 participantes</p>
+              <div class="mensaje-chat">
+                <span class="avatar avatar--naranja avatar--chico">SM</span>
+                <p>¿Alguien más llega el 14?</p>
+              </div>
+              <div class="mensaje-chat">
+                <span class="avatar avatar--verde-oscuro avatar--chico">DR</span>
+                <p>Yo llego el 14 también 🙋</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nube de fotos estilo Pinterest -->
+        <div class="tarjeta-fotos">
+          <div class="fila-flex fila-flex--dos-columnas">
+            <div>
+              <span class="icono-circulo icono-circulo--grande icono-circulo--naranja"><i class="fa-solid fa-heart"></i></span>
+              <h3 class="texto-oscuro">La nube del viaje</h3>
+              <p class="parrafo-gris">
+                Todos los participantes suben sus fotos a un álbum compartido dentro
+                de la app. Un muro visual estilo Pinterest donde cada imagen cuenta
+                una historia del mismo viaje.
+              </p>
+              <ul class="lista-check">
+                <li><span class="icono-check"><i class="fa-solid fa-check"></i></span>Subís tus fotos directo desde la app</li>
+                <li><span class="icono-check"><i class="fa-solid fa-check"></i></span>Organizadas por día y por destino</li>
+                <li><span class="icono-check"><i class="fa-solid fa-check"></i></span>Descargá todas las fotos con un toque</li>
+              </ul>
+            </div>
+
+            <!--
+              ============================================================
+              LO HICE CON IA, NO LO VIMOS, NO SABIA COMO HACERLO,
+              LE PEDI AYUDA A LA IA PARA QUE ME DIGA COMO HACERLO
+              ============================================================
+              Esta es la grilla de fotos estilo Pinterest (masonry).
+              En clase solo vimos Flexbox, y con flex-wrap las fotos quedan
+              todas más o menos parejas, pero en el diseño de Figma las fotos
+              tienen alturas distintas y algunas ocupan el doble de ancho.
+              Eso NO se puede lograr bien con Flexbox porque Flexbox solo
+              maneja UNA dirección a la vez (fila o columna).
+              Le pregunté a la IA cómo se hacía y me explicó que existe
+              CSS GRID, que arma una grilla de verdad con filas Y columnas
+              al mismo tiempo, y permite que un elemento "ocupe" varias
+              columnas o varias filas usando grid-column / grid-row.
+              La clase "grilla-fotos__item--ancha" hace que esa foto en
+              particular ocupe 2 columnas en vez de 1, logrando el efecto
+              Pinterest real.
+            -->
+            <div class="grilla-fotos">
+              <div class="grilla-fotos__item"><img src="https://images.unsplash.com/photo-1533240332313-0db49b459ad6?w=600&h=400&fit=crop&auto=format" alt="foto del viaje"></div>
+              <div class="grilla-fotos__item"><img src="https://images.unsplash.com/photo-1672841828459-bc913fdcd995?w=600&h=400&fit=crop&auto=format" alt="foto del viaje"></div>
+              <div class="grilla-fotos__item"><img src="https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?w=600&h=400&fit=crop&auto=format" alt="foto del viaje"></div>
+              <div class="grilla-fotos__item"><img src="https://images.unsplash.com/photo-1604223190546-a43e4c7f29d7?w=600&h=400&fit=crop&auto=format" alt="foto del viaje"></div>
+              <div class="grilla-fotos__item grilla-fotos__item--ancha"><img src="https://images.unsplash.com/photo-1533240332313-0db49b459ad6?w=600&h=400&fit=crop&auto=format" alt="foto del viaje"></div>
+              <div class="grilla-fotos__item"><img src="https://images.unsplash.com/photo-1672841828459-bc913fdcd995?w=600&h=400&fit=crop&auto=format" alt="foto del viaje"></div>
+              <div class="grilla-fotos__item"><img src="https://images.unsplash.com/photo-1604223190546-a43e4c7f29d7?w=600&h=400&fit=crop&auto=format" alt="foto del viaje"></div>
+              <div class="grilla-fotos__item"><img src="https://images.unsplash.com/photo-1520880867055-1e30d1cb001c?w=600&h=400&fit=crop&auto=format" alt="foto del viaje"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         SECCIÓN FEATURES — Clase 6 (Flexbox wrap, tarjetas iguales de ancho fijo)
+    ============================================ -->
+    <section class="features" id="features">
+      <div class="contenedor-ancho">
+        <div class="titulo-seccion">
+          <span class="eyebrow eyebrow--verde">Ventajas únicas</span>
+          <h2>Por qué TripMatch es diferente</h2>
+        </div>
+
+        <!-- 13 tarjetas iguales que se acomodan solas con flex-wrap (Clase 6) -->
+        <div class="fila-flex fila-flex--wrap grilla-features">
+          <div class="tarjeta-feature">
+            <span class="icono-feature icono-feature--verde"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <h3>Una sola búsqueda</h3>
+            <p>Todos los viajes grupales en un solo lugar. Sin abrir 15 pestañas.</p>
+          </div>
+          <div class="tarjeta-feature">
+            <span class="icono-feature icono-feature--naranja"><i class="fa-solid fa-arrow-trend-up"></i></span>
+            <h3>Recomendaciones personalizadas</h3>
+            <p>Como Spotify para la música, pero para tus próximos viajes grupales.</p>
+          </div>
+          <div class="tarjeta-feature">
+            <span class="icono-feature icono-feature--gris"><i class="fa-solid fa-filter"></i></span>
+            <h3>Información estandarizada</h3>
+            <p>Cada viaje presentado con el mismo formato. Comparar es fácil.</p>
+          </div>
+          <div class="tarjeta-feature">
+            <span class="icono-feature icono-feature--verde"><i class="fa-solid fa-bolt"></i></span>
+            <h3>Menos esfuerzo cognitivo</h3>
+            <p>Decidí con confianza sin sentirte agotado por el proceso.</p>
+          </div>
+          <div class="tarjeta-feature">
+            <span class="icono-feature icono-feature--naranja"><i class="fa-regular fa-clock"></i></span>
+            <h3>Compará en segundos</h3>
+            <p>Precio, fechas, dificultad, alojamiento — todo alineado.</p>
+          </div>
+          <div class="tarjeta-feature">
+            <span class="icono-feature icono-feature--gris"><i class="fa-solid fa-shield"></i></span>
+            <h3>Operadores verificados</h3>
+            <p>Solo agencias y operadores de confianza publicados en la plataforma.</p>
+          </div>
+          <div class="tarjeta-feature">
+            <span class="icono-feature icono-feature--verde"><i class="fa-solid fa-users"></i></span>
+            <h3>Viajes grupales reales</h3>
+            <p>No armás el tuyo. Encontrás uno que ya existe y te sumás.</p>
+          </div>
+          <div class="tarjeta-feature">
+            <span class="icono-feature icono-feature--naranja"><i class="fa-regular fa-bookmark"></i></span>
+            <h3>Guardá favoritos</h3>
+            <p>Marcá los que te interesan y comparalos cuando estés listo.</p>
+          </div>
+          <div class="tarjeta-feature">
+            <span class="icono-feature icono-feature--gris"><i class="fa-solid fa-globe"></i></span>
+            <h3>Filtros inteligentes</h3>
+            <p>Filtrá por presupuesto, duración, destino, nivel de actividad y más.</p>
+          </div>
+          <div class="tarjeta-feature">
+            <span class="icono-feature icono-feature--verde"><i class="fa-solid fa-compass"></i></span>
+            <h3>Experiencia Android nativa</h3>
+            <p>Diseñado para Android con microanimaciones fluidas.</p>
+          </div>
+          <div class="tarjeta-feature">
+            <span class="icono-feature icono-feature--naranja"><i class="fa-regular fa-bell"></i></span>
+            <h3>Alertas personalizadas</h3>
+            <p>Recibís notificaciones de nuevos viajes y destinos guardados.</p>
+          </div>
+          <div class="tarjeta-feature">
+            <span class="icono-feature icono-feature--gris"><i class="fa-regular fa-comment"></i></span>
+            <h3>Comunidad del grupo</h3>
+            <p>Antes de viajar, conocé a quienes van con vos en la misma app.</p>
+          </div>
+          <div class="tarjeta-feature">
+            <span class="icono-feature icono-feature--verde"><i class="fa-regular fa-heart"></i></span>
+            <h3>Nube compartida de fotos</h3>
+            <p>Subí y explorá fotos del viaje en un espacio visual compartido.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         SECCIÓN CÓMO FUNCIONA — Clase 6 (Flexbox wrap, 4 pasos)
+    ============================================ -->
+    <section class="como-funciona" id="como-funciona">
+      <div class="contenedor-ancho">
+        <div class="titulo-seccion titulo-seccion--oscuro">
+          <span class="eyebrow eyebrow--naranja">El proceso</span>
+          <h2>Cómo funciona</h2>
+          <p>De cero a reservar tu viaje grupal ideal en cuatro pasos simples.</p>
+        </div>
+
+        <div class="fila-flex fila-flex--wrap grilla-pasos">
+          <div class="tarjeta-paso">
+            <span class="numero-paso">01</span>
+            <h3>Creá tu perfil de viajero</h3>
+            <p>Contanos quién sos, qué te gusta y cómo viajás. Solo una vez.</p>
+          </div>
+          <div class="tarjeta-paso">
+            <span class="numero-paso">02</span>
+            <h3>Recibí viajes personalizados</h3>
+            <p>El algoritmo selecciona los viajes que mejor encajan con vos.</p>
+          </div>
+          <div class="tarjeta-paso">
+            <span class="numero-paso">03</span>
+            <h3>Comparás sin esfuerzo</h3>
+            <p>Todo en el mismo formato. Precio, fechas, actividades ya alineados.</p>
+          </div>
+          <div class="tarjeta-paso">
+            <span class="numero-paso">04</span>
+            <h3>Te unís al viaje ideal</h3>
+            <p>Encontraste el tuyo. Reservá directo desde la app.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         TESTIMONIOS — Clase 6 (Flexbox wrap, 3 tarjetas)
+    ============================================ -->
+    <section class="testimonios">
+      <div class="contenedor-ancho">
+        <div class="titulo-seccion">
+          <span class="eyebrow eyebrow--verde">Lo que dicen los viajeros</span>
+          <h2>Ya dejaron de abrir 15 pestañas</h2>
+        </div>
+
+        <div class="fila-flex fila-flex--wrap fila-flex--centrado grilla-testimonios">
+          <article class="tarjeta-testimonio">
+            <div class="tarjeta-testimonio__estrellas">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <p>"Antes abría 12 pestañas distintas para comparar viajes. Con TripMatch
+               encontré mi viaje a Patagonia en 10 minutos."</p>
+            <div class="tarjeta-testimonio__autor">
+              <span class="avatar avatar--verde">SM</span>
+              <div>
+                <p class="nombre-autor">Sofía Martínez, 29</p>
+                <span class="ciudad-autor"><i class="fa-solid fa-location-dot"></i> Buenos Aires · Torres del Paine</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="tarjeta-testimonio">
+            <div class="tarjeta-testimonio__estrellas">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <p>"El perfil de viajero es lo mejor. Me recomendó exactamente el tipo
+               de viaje que buscaba sin que yo tuviera que explicar nada."</p>
+            <div class="tarjeta-testimonio__autor">
+              <span class="avatar avatar--verde-oscuro">DR</span>
+              <div>
+                <p class="nombre-autor">Diego Ramírez, 34</p>
+                <span class="ciudad-autor"><i class="fa-solid fa-location-dot"></i> Medellín · Machu Picchu Express</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="tarjeta-testimonio">
+            <div class="tarjeta-testimonio__estrellas">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <p>"Por fin una app que entiende que no quiero organizar todo,
+               solo quiero sumarme a algo bueno."</p>
+            <div class="tarjeta-testimonio__autor">
+              <span class="avatar avatar--naranja">VC</span>
+              <div>
+                <p class="nombre-autor">Valentina Cruz, 31</p>
+                <span class="ciudad-autor"><i class="fa-solid fa-location-dot"></i> Ciudad de México · Costa Rica</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         CTA FINAL — Clase 6 (Flexbox, dos columnas)
+    ============================================ -->
+    <section class="cta-final">
+      <div class="contenedor-ancho fila-flex fila-flex--dos-columnas">
+        <div>
+          <span class="eyebrow eyebrow--naranja">Disponible en Android</span>
+          <h2 class="titulo-mediano titulo-blanco">¿Listo para descubrir tu próxima aventura grupal?</h2>
+          <p class="parrafo-claro">Creá tu perfil de viajero y dejá que TripMatch encuentre el viaje grupal perfecto para vos.</p>
+
+          <a href="#" class="btn-google-play">
+            <i class="fa-brands fa-google-play"></i>
+            <span>
+              <small>Disponible en</small>
+              <b>Google Play</b>
+            </span>
+          </a>
+
+          <div class="fila-flex numeros-cta">
+            <div class="numero-cta"><p>+2.400</p><span>viajes grupales</span></div>
+            <div class="numero-cta"><p>+800</p><span>operadores</span></div>
+            <div class="numero-cta"><p>+12K</p><span>viajeros</span></div>
+          </div>
+        </div>
+
+        <div class="alinear-centro">
+          <div class="celular-mockup celular-mockup--simple">
+            <div class="celular-mockup__notch"></div>
+            <div class="celular-mockup__pantalla celular-mockup__pantalla--simple">
+              <svg class="icono-gigante" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.2"/>
+                <g stroke="currentColor" stroke-width="1" stroke-linecap="round">
+                  <line x1="12" y1="2" x2="12" y2="3.3"/>
+                  <line x1="17" y1="3.34" x2="16.35" y2="4.47"/>
+                  <line x1="20.66" y1="7" x2="19.53" y2="7.65"/>
+                  <line x1="22" y1="12" x2="20.7" y2="12"/>
+                  <line x1="20.66" y1="17" x2="19.53" y2="16.35"/>
+                  <line x1="17" y1="20.66" x2="16.35" y2="19.53"/>
+                  <line x1="12" y1="22" x2="12" y2="20.7"/>
+                  <line x1="7" y1="20.66" x2="7.65" y2="19.53"/>
+                  <line x1="3.34" y1="17" x2="4.47" y2="16.35"/>
+                  <line x1="2" y1="12" x2="3.3" y2="12"/>
+                  <line x1="3.34" y1="7" x2="4.47" y2="7.65"/>
+                  <line x1="7" y1="3.34" x2="7.65" y2="4.47"/>
+                </g>
+                <text x="12" y="7.6" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">N</text>
+                <text x="17.3" y="13.1" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">E</text>
+                <text x="12" y="18.7" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">S</text>
+                <text x="6.7" y="13.1" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">W</text>
+                <path d="M12,7 L13.4,10.6 L17,12 L13.4,13.4 L12,17 L10.6,13.4 L7,12 L10.6,10.6 Z" fill="var(--naranja)"/>
+              </svg>
+              <p>TripMatch</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--
+      ============================================================
+      CLASE 2/3 — MULTI-PÁGINA: acá ANTES tenía todo el prototipo
+      funcional metido adentro de la landing, como si fuera una sola
+      pantalla con "paneles" que se mostraban/ocultaban con JS. Ahora
+      cada parte del Task Flow tiene su PROPIA página HTML real,
+      igual que en mis Wireframes de Media Fidelidad (docx sección
+      6): 6 pantallas conectadas por navegación real, no una sola
+      pantalla con contenido escondido.
+
+      Páginas nuevas: login.html (Login/Registro) · perfil.html
+      (Quiz de perfil, Task Flow 1) · buscar.html (Buscar y Match,
+      Task Flow 2 inicio) · comparar.html (Comparación con %,
+      Task Flow 2 cierre) · guardados.html (Favoritos/Reservados).
+
+      Los botones de la navbar, del hero y de "Comparar viajes" ya
+      apuntan directo a esas páginas con <a href="..."> comunes
+      (Clase 2), en vez de abrir un modal con JS.
+      ============================================================ -->
+  </main>
+
+  <!-- ============================================
+       FOOTER — Clase 2 y 3 (etiqueta semántica de pie de página) + Clase 6 (flexbox)
+  ============================================ -->
+  <footer class="footer">
+    <div class="contenedor-ancho fila-flex fila-flex--space-between">
+      <div class="footer__logo">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.2"/>
+          <g stroke="currentColor" stroke-width="1" stroke-linecap="round">
+            <line x1="12" y1="2" x2="12" y2="3.3"/>
+            <line x1="17" y1="3.34" x2="16.35" y2="4.47"/>
+            <line x1="20.66" y1="7" x2="19.53" y2="7.65"/>
+            <line x1="22" y1="12" x2="20.7" y2="12"/>
+            <line x1="20.66" y1="17" x2="19.53" y2="16.35"/>
+            <line x1="17" y1="20.66" x2="16.35" y2="19.53"/>
+            <line x1="12" y1="22" x2="12" y2="20.7"/>
+            <line x1="7" y1="20.66" x2="7.65" y2="19.53"/>
+            <line x1="3.34" y1="17" x2="4.47" y2="16.35"/>
+            <line x1="2" y1="12" x2="3.3" y2="12"/>
+            <line x1="3.34" y1="7" x2="4.47" y2="7.65"/>
+            <line x1="7" y1="3.34" x2="7.65" y2="4.47"/>
+          </g>
+          <text x="12" y="7.6" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">N</text>
+          <text x="17.3" y="13.1" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">E</text>
+          <text x="12" y="18.7" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">S</text>
+          <text x="6.7" y="13.1" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">W</text>
+          <path d="M12,7 L13.4,10.6 L17,12 L13.4,13.4 L12,17 L10.6,13.4 L7,12 L10.6,10.6 Z" fill="var(--naranja)"/>
+        </svg>
+        <span>TRIP<span class="navbar__logo-acento">MATCH</span></span>
+      </div>
+      <div class="footer__links">
+        <a href="#">Privacidad</a>
+        <a href="#">Términos</a>
+        <a href="#">Contacto</a>
+        <a href="#">Operadores</a>
+      </div>
+      <p class="footer__copy">&copy; 2025 TripMatch. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!--
+    Los modales de Login y Quiz que antes vivían acá se convirtieron
+    en páginas propias: login.html y perfil.html (ver comentario
+    más arriba, antes del footer, con el detalle completo).
+  -->
+
+  <!--
+    CLASE 18 — Separo por completo el JS del HTML: main.js se
+    vincula acá, al final del body, para que el navegador ya haya
+    leído todo el HTML antes de que el script intente buscar
+    elementos con querySelector.
+  -->
+  <script src="datos/ofertas.js?v=1"></script>
+  <script src="main.js?v=5"></script>
+</body>
+</html>
