@@ -186,6 +186,26 @@ img {
   color: var(--negro);
 }
 
+/* ------------------------------------------------------------
+   Botón hamburguesa — solo existe visualmente en mobile (ver
+   @media max-width:860px más abajo). En desktop queda oculto
+   porque .navbar__links ya se muestra siempre en fila.
+   ------------------------------------------------------------ */
+.navbar__toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--verde-oscuro);
+  font-size: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.navbar__toggle:hover { color: var(--verde); }
+
 .navbar__acciones {
   display: flex;
   align-items: center;
@@ -1348,7 +1368,42 @@ a.btn-texto:hover {
 /* Nivel 2 — Mobile grande (el que ya existía, ahora documentado
    y con un par de ajustes extra de la Clase 9) */
 @media (max-width: 860px) {
-  .navbar__links { display: none; } /* en mobile escondo los links de texto */
+  /* ------------------------------------------------------------
+     FIX NAVBAR MOBILE — antes .navbar__links quedaba con
+     display:none FIJO en mobile, sin ninguna forma de volver a
+     mostrarlo: al entrar desde el celular se perdía por completo
+     el acceso a "Cómo funciona", "Comparar viajes", "Por qué
+     nosotros" y "Probar la app" (Heurística 3 de Nielsen — control
+     y libertad del usuario: siempre tiene que haber una salida/
+     forma de acceder a las opciones). Ahora aparece un botón
+     hamburguesa que despliega esos mismos links en un panel
+     desplegable (patrón estándar de navegación mobile).
+     ------------------------------------------------------------ */
+  .navbar__toggle { display: inline-flex; }
+
+  .navbar__links {
+    display: none; /* estado cerrado por default */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--crema);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 16px 28px rgba(0, 0, 0, 0.12);
+    padding: 4px 24px 12px;
+  }
+  .navbar__links.navbar__links--abierto {
+    display: flex; /* JS en main.js agrega/saca esta clase al tocar el botón */
+  }
+  .navbar__links a {
+    padding: 14px 0;
+    border-top: 1px dashed var(--borde-claro);
+    font-size: 15px;
+  }
+  .navbar__links a:first-child { border-top: none; }
+
   .hero__flotante { display: none; } /* las tarjetas flotantes ocupan mucho lugar en mobile */
   .grilla-fotos { grid-template-columns: repeat(2, 1fr); }
 
@@ -1410,6 +1465,98 @@ a.btn-texto:hover {
   .grilla-fotos__item--ancha { grid-column: span 1; } /* en 1 columna no hay "ancho doble" posible */
   .titulo-seccion { margin-bottom: 40px; }
   .form-busqueda { padding: 14px; }
+}
+
+/* ------------------------------------------------------------
+   FIX UX — comparar.html en celular VERTICAL (portrait)
+
+   Problema reportado: la comparación "se ve" en horizontal pero
+   en vertical no, porque #grid-comparacion y .comparacion-
+   detallada__grid pasan a una sola columna apilada: para comparar
+   la tarjeta 1 contra la 4 hay que scrollear una pantalla larga y
+   se pierde la referencia de la primera (mala Working Memory /
+   alta carga cognitiva — Ley de Miller aplicada a UX, y va en
+   contra de la Heurística 6 de Nielsen: "reconocer antes que
+   recordar").
+
+   Solución con dos partes:
+   1) Cartel .aviso-rotar (solo portrait + solo celular) que invita
+      a girar el dispositivo para ver la tabla completa en simultáneo.
+   2) Mientras el usuario sigue en vertical, en vez de una columna
+      larga sin fin, las tarjetas se muestran como carrusel horizontal
+      con scroll-snap: cada una ocupa ~85% del ancho (se alcanza a
+      ver el borde de la siguiente = affordance de "hay más para el
+      costado", Ley de Fitts + Gestalt de continuidad), y el usuario
+      desliza en vez de scrollear la página entera hacia abajo.
+      Apenas gira el celular a horizontal, vuelve a la grilla normal
+      en columnas (la media query deja de aplicar automáticamente).
+   ------------------------------------------------------------ */
+
+/* Default: en landscape o desktop el cartel de "girá tu celular"
+   no tiene sentido (la comparación ya se ve en columnas lado a
+   lado), así que arranca oculto y el @media de abajo lo muestra
+   solo cuando corresponde. */
+.aviso-rotar { display: none; }
+
+@media (max-width: 767px) and (orientation: portrait) {
+  .aviso-rotar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--verde-claro-bg);
+    color: var(--verde-oscuro);
+    border: 1px solid var(--verde);
+    border-radius: 14px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .aviso-rotar__icono {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    animation: girar-celular 2.2s ease-in-out infinite;
+  }
+
+  #grid-comparacion.grid-resultados {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 16px;
+    padding-bottom: 8px;
+    margin-bottom: 32px;
+  }
+  #grid-comparacion.grid-resultados > .tarjeta-viaje {
+    flex: 0 0 85%;
+    max-width: 85%;
+    scroll-snap-align: start;
+  }
+  #grid-comparacion .mensaje-vacio { flex: 1 1 100%; }
+
+  .comparacion-detallada__grid {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+  }
+  .comparacion-detallada__columna {
+    flex: 0 0 88%;
+    max-width: 88%;
+    scroll-snap-align: start;
+  }
+}
+
+@keyframes girar-celular {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-90deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aviso-rotar__icono { animation: none; }
 }
 
 /* ============================================================

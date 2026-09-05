@@ -43,6 +43,9 @@
         <a href="index.html#features">Por qué nosotros</a>
         <a href="buscar.html">Probar la app</a>
       </nav>
+      <button type="button" class="navbar__toggle" id="navbar-toggle" aria-label="Abrir menú" aria-controls="menu-principal" aria-expanded="false">
+        <i class="fa-solid fa-bars"></i>
+      </button>
       <!--
         CLASE 2 — Un solo CTA en vez de dos botones separados
         ("Iniciar sesión" / "Crear perfil"): login.html ya resuelve
@@ -81,6 +84,22 @@
         <h2>Vos elegís el viaje. Nosotros hacemos el resto.</h2>
         <p>Compará opciones, precios y agencias en un solo lugar. Encontramos las mejores alternativas según tus gustos y presupuesto.</p>
         <p class="titulo-seccion__pregunta">¿A dónde vamos?</p>
+      </div>
+
+      <!--
+        FIX UX MOBILE — En portrait (celular vertical) las tarjetas y
+        la tabla de balance de más abajo pasan a mostrarse como un
+        carrusel horizontal con scroll-snap (ver @media orientation:
+        portrait en style.css), porque en una sola columna angosta se
+        pierde la posibilidad de "comparar de un vistazo". Este cartel
+        avisa que girando el celular a horizontal se ve todo en
+        simultáneo, sin tener que deslizar. Solo existe en mobile
+        portrait (display:none en cualquier otro caso) y JS lo oculta
+        además si todavía no hay ningún viaje para comparar.
+      -->
+      <div class="aviso-rotar" id="aviso-rotar-celular">
+        <i class="fa-solid fa-mobile-screen-button aviso-rotar__icono" aria-hidden="true"></i>
+        <p>Girá tu celular para ver la comparación completa en horizontal — o deslizá las tarjetas hacia el costado.</p>
       </div>
 
       <div class="grid-resultados" id="grid-comparacion">

@@ -475,6 +475,59 @@ if (botonCerrarSesion) {
 
 renderNavbar();
 
+/* ================================================================
+   3.1) MENÚ HAMBURGUESA (mobile) — se ejecuta en TODAS las páginas
+   Antes, en celular, .navbar__links quedaba oculto con display:none
+   fijo y no había ninguna forma de volver a mostrarlo (problema de
+   UX reportado: "no se ve el tablero de arriba"). Este bloque agrega
+   la clase "navbar__links--abierto" (Clase 18: classList) que el CSS
+   usa para desplegar el panel en @media max-width:860px.
+   ================================================================ */
+const botonMenuMobile = document.querySelector("#navbar-toggle");
+const menuMobile = document.querySelector("#menu-principal");
+
+if (botonMenuMobile && menuMobile) {
+  botonMenuMobile.addEventListener("click", function (evento) {
+    evento.stopPropagation();
+    const abierto = menuMobile.classList.toggle("navbar__links--abierto");
+    botonMenuMobile.setAttribute("aria-expanded", abierto ? "true" : "false");
+    botonMenuMobile.querySelector("i").className = abierto
+      ? "fa-solid fa-xmark"
+      : "fa-solid fa-bars";
+  });
+
+  // Si el usuario toca un link del menú, lo cerramos (así no tapa la
+  // página de destino ni queda "pegado" abierto al navegar).
+  menuMobile.querySelectorAll("a").forEach(function (link) {
+    link.addEventListener("click", function () {
+      menuMobile.classList.remove("navbar__links--abierto");
+      botonMenuMobile.setAttribute("aria-expanded", "false");
+      botonMenuMobile.querySelector("i").className = "fa-solid fa-bars";
+    });
+  });
+
+  // Tocar afuera del menú también lo cierra.
+  document.addEventListener("click", function (evento) {
+    const clickAdentro = menuMobile.contains(evento.target) || botonMenuMobile.contains(evento.target);
+    if (!clickAdentro) {
+      menuMobile.classList.remove("navbar__links--abierto");
+      botonMenuMobile.setAttribute("aria-expanded", "false");
+      botonMenuMobile.querySelector("i").className = "fa-solid fa-bars";
+    }
+  });
+
+  // Si el usuario gira el celular o agranda la ventana hasta pasar a
+  // vista de escritorio, cerramos el menú para que no quede abierto
+  // "de más" cuando .navbar__links ya se muestra siempre en fila.
+  window.addEventListener("resize", function () {
+    if (window.innerWidth > 860) {
+      menuMobile.classList.remove("navbar__links--abierto");
+      botonMenuMobile.setAttribute("aria-expanded", "false");
+      botonMenuMobile.querySelector("i").className = "fa-solid fa-bars";
+    }
+  });
+}
+
 
 /* ================================================================
    5) DELEGACIÓN DE EVENTOS COMPARTIDA (favoritos)
@@ -1283,10 +1336,16 @@ if (gridComparacion) {
       "</div>";
   }
 
+  // Cartel "girá tu celular" (ver comparar.html): solo tiene sentido
+  // mostrarlo si en verdad hay algo para comparar.
+  const avisoRotar = document.querySelector("#aviso-rotar-celular");
+
   const ids = obtenerIdsDesdeURL();
   if (ids.length < 2) {
     gridComparacion.innerHTML = '<p class="mensaje-vacio">Elegí 2 o más viajes desde "Buscar y Match" y tocá "Comparar seleccionados".</p>';
+    if (avisoRotar) avisoRotar.style.display = "none";
   } else {
+    if (avisoRotar) avisoRotar.style.display = "";
     gridComparacion.innerHTML = "";
     ids.forEach(function (id) { // forEach (Clase 19-20)
       const viaje = buscarViajePorId(id);
