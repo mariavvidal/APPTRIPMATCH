@@ -1362,6 +1362,44 @@ a.btn-texto:hover {
   }
 
   .hero { min-height: auto; padding: 6rem 0 3rem; } /* 100vh rompe en mobile con teclados/barras del navegador */
+
+  /* ------------------------------------------------------------
+     FIX RESPONSIVE — Bloques de dos columnas no se apilaban bien
+     en celular. "flex-wrap: wrap" solo no alcanza: como los hijos
+     tenían flex-shrink:1 y un flex-basis en px (460px/300px/380px),
+     el navegador los achicaba a la fuerza para que entraran uno al
+     lado del otro en vez de saltar de línea, sobre todo porque
+     .celular-mockup tiene un ancho FIJO (260px/220px) que no cede.
+     Resultado: columna de texto aplastada, contenido cortado, y la
+     imagen de fondo del Hero (que depende del tamaño real de .hero)
+     quedando desalineada con su overlay oscuro — se veía como un
+     bloque negro/desordenado en vez de la foto completa.
+
+     La solución real es forzar flex-direction: column acá (no
+     alcanza con dejar que "decidan" solas con wrap), y que cada
+     columna pase a ocupar el 100% del ancho disponible.
+     ------------------------------------------------------------ */
+  .hero__contenido,
+  .fila-flex--dos-columnas {
+    flex-direction: column;
+  }
+  .hero__columna-texto,
+  .hero__columna-mockup,
+  .fila-flex--dos-columnas > * {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+  .hero__columna-mockup { justify-content: center; }
+
+  /* Los mockups de celular tenían ancho fijo en px, que en
+     pantallas angostas podía forzar overflow horizontal (y el
+     "corte" visual, porque body tiene overflow-x:hidden). Con
+     max-width relativo, nunca superan el ancho real disponible. */
+  .celular-mockup,
+  .celular-mockup--simple {
+    width: 260px;
+    max-width: 80vw;
+  }
 }
 
 /* Nivel 3 — Mobile chico (celulares angostos, <480px) */
