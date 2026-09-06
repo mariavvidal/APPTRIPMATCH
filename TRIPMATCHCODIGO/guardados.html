@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guardados — TripMatch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar__contenedor">
+      <a href="index.html" class="navbar__logo">
+        <svg class="navbar__logo-icono" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.2"/>
+          <g stroke="currentColor" stroke-width="1" stroke-linecap="round">
+            <line x1="12" y1="2" x2="12" y2="3.3"/>
+            <line x1="17" y1="3.34" x2="16.35" y2="4.47"/>
+            <line x1="20.66" y1="7" x2="19.53" y2="7.65"/>
+            <line x1="22" y1="12" x2="20.7" y2="12"/>
+            <line x1="20.66" y1="17" x2="19.53" y2="16.35"/>
+            <line x1="17" y1="20.66" x2="16.35" y2="19.53"/>
+            <line x1="12" y1="22" x2="12" y2="20.7"/>
+            <line x1="7" y1="20.66" x2="7.65" y2="19.53"/>
+            <line x1="3.34" y1="17" x2="4.47" y2="16.35"/>
+            <line x1="2" y1="12" x2="3.3" y2="12"/>
+            <line x1="3.34" y1="7" x2="4.47" y2="7.65"/>
+            <line x1="7" y1="3.34" x2="7.65" y2="4.47"/>
+          </g>
+          <text x="12" y="7.6" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">N</text>
+          <text x="17.3" y="13.1" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">E</text>
+          <text x="12" y="18.7" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">S</text>
+          <text x="6.7" y="13.1" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">W</text>
+          <path d="M12,7 L13.4,10.6 L17,12 L13.4,13.4 L12,17 L10.6,13.4 L7,12 L10.6,10.6 Z" fill="var(--naranja)"/>
+        </svg>
+        <span class="navbar__logo-texto">TRIP<span class="navbar__logo-acento">MATCH</span></span>
+      </a>
+      <nav class="navbar__links" id="menu-principal">
+        <a href="index.html#como-funciona">Cómo funciona</a>
+        <a href="index.html#comparar">Comparar viajes</a>
+        <a href="index.html#features">Por qué nosotros</a>
+        <a href="buscar.html">Probar la app</a>
+      </nav>
+      <button type="button" class="navbar__toggle" id="navbar-toggle" aria-label="Abrir menú" aria-controls="menu-principal" aria-expanded="false">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <!--
+        CLASE 2 — Un solo CTA en vez de dos botones separados
+        ("Iniciar sesión" / "Crear perfil"): login.html ya resuelve
+        las dos cosas en la misma pantalla (login manual, Google, o
+        el link a registrarse), así que tener dos botones para el
+        mismo destino era redundante.
+      -->
+      <div class="navbar__acciones" id="navbar-sesion-inactiva">
+        <a href="login.html" id="btn-abrir-login" class="btn-primario">Iniciar sesión / Crear perfil</a>
+      </div>
+      <div class="navbar__acciones" id="navbar-sesion-activa" style="display:none;">
+        <span class="btn-texto" id="navbar-saludo">Hola</span>
+        <a href="inicio.html" id="btn-ir-inicio" class="btn-texto">Inicio</a>
+        <a href="guardados.html" id="btn-ir-guardados" class="btn-texto">Guardados</a>
+        <button id="btn-cerrar-sesion" class="btn-primario btn-primario--chico">Cerrar sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <!--
+    CLASE 2 — Página de Guardados: división en Favoritos/Reservados
+    validada por el Card Sorting (docx sección 1, hallazgo clave:
+    "favoritos" es interés, "reservados" es compromiso). Reservados
+    queda como placeholder porque reservar/pagar está fuera del
+    alcance de este MVP (docx, tabla MoSCoW, ítem 15 = Won't).
+  -->
+  <main class="pagina-interna">
+    <div class="contenedor-ancho">
+      <div class="titulo-seccion titulo-seccion--oscuro">
+        <span class="eyebrow eyebrow--naranja">Mi cuenta</span>
+        <h2>Guardados</h2>
+        <p>Todo lo que marcaste con el corazón durante tu búsqueda.</p>
+      </div>
+
+      <!-- main.js pisa este bloque entero si todavía no iniciaste
+           sesión, mostrando una invitación a loguearte en vez de
+           la grilla (Clase 18: innerHTML). -->
+      <div id="contenido-guardados">
+        <div class="sub-tabs">
+          <button class="sub-tab sub-tab--activo" data-subtab="favoritos">Favoritos</button>
+          <button class="sub-tab" data-subtab="reservados">Reservados</button>
+        </div>
+        <div class="grid-resultados" id="grid-guardados"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="contenedor-ancho fila-flex fila-flex--space-between">
+      <div class="footer__logo">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.2"/>
+          <g stroke="currentColor" stroke-width="1" stroke-linecap="round">
+            <line x1="12" y1="2" x2="12" y2="3.3"/>
+            <line x1="17" y1="3.34" x2="16.35" y2="4.47"/>
+            <line x1="20.66" y1="7" x2="19.53" y2="7.65"/>
+            <line x1="22" y1="12" x2="20.7" y2="12"/>
+            <line x1="20.66" y1="17" x2="19.53" y2="16.35"/>
+            <line x1="17" y1="20.66" x2="16.35" y2="19.53"/>
+            <line x1="12" y1="22" x2="12" y2="20.7"/>
+            <line x1="7" y1="20.66" x2="7.65" y2="19.53"/>
+            <line x1="3.34" y1="17" x2="4.47" y2="16.35"/>
+            <line x1="2" y1="12" x2="3.3" y2="12"/>
+            <line x1="3.34" y1="7" x2="4.47" y2="7.65"/>
+            <line x1="7" y1="3.34" x2="7.65" y2="4.47"/>
+          </g>
+          <text x="12" y="7.6" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">N</text>
+          <text x="17.3" y="13.1" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">E</text>
+          <text x="12" y="18.7" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">S</text>
+          <text x="6.7" y="13.1" text-anchor="middle" font-size="3.3" font-weight="700" fill="currentColor">W</text>
+          <path d="M12,7 L13.4,10.6 L17,12 L13.4,13.4 L12,17 L10.6,13.4 L7,12 L10.6,10.6 Z" fill="var(--naranja)"/>
+        </svg>
+        <span>TRIP<span class="navbar__logo-acento">MATCH</span></span>
+      </div>
+      <div class="footer__links">
+        <a href="#">Privacidad</a>
+        <a href="#">Términos</a>
+        <a href="#">Contacto</a>
+        <a href="#">Operadores</a>
+      </div>
+      <p class="footer__copy">&copy; 2025 TripMatch. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="datos/ofertas.js?v=1"></script>
+  <script src="main.js?v=5"></script>
+</body>
+</html>
